@@ -15,36 +15,57 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
+	"github.com/cp16net/go-image2ascii/image"
 	"github.com/spf13/cobra"
+)
+
+var (
+	jsonOutput bool
 )
 
 // convertCmd represents the convert command
 var convertCmd = &cobra.Command{
-	Use:   "convert",
+	Use:   "convert [full filepath to image]",
 	Short: "Converts an image to acsii art",
 	Long:  `Converts an image to acsii art`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
-		fmt.Println("convert called")
 		// check number of args (does cobra do this?)
+		if len(args) != 1 {
+			fmt.Println("**ERROR** Wrong number of argments")
+			cmd.Usage()
+			os.Exit(1)
+		}
+		filepath := args[0]
+
 		// check for image file exists
+		if _, err := os.Stat(filepath); os.IsNotExist(err) {
+			// path/to/whatever does not exist
+			fmt.Println("**ERROR** File does not exist [", filepath, "]")
+			os.Exit(1)
+		}
+
 		// call the image convert function here.
+		// fmt.Println("do work on: ", filepath)
+		img, err := image.Execute(filepath)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		if jsonOutput == true {
+			j, _ := json.MarshalIndent(img, "", "  ")
+			fmt.Println(string(j))
+		} else {
+			fmt.Println(img.Data)
+		}
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(convertCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// convertCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// convertCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
+	convertCmd.Flags().BoolVarP(&jsonOutput, "json", "j", false, "output in json format")
 }

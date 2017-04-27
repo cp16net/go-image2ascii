@@ -42,7 +42,7 @@ const (
 func NewLogger(level string) *logrus.Logger {
 
 	minLogLevel := logrus.DebugLevel
-	switch level {
+	switch strings.ToLower(level) {
 	case INFO:
 		minLogLevel = logrus.InfoLevel
 	case WARN:
@@ -63,4 +63,4 @@ func NewLogger(level string) *logrus.Logger {
 }
 
 // Logger is a default logger for application use
-var Logger = NewLogger(strings.ToLower("debug"))
+var Logger = NewLogger("debug")

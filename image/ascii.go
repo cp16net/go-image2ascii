@@ -14,6 +14,70 @@
 
 package image
 
-// Image is the image data
+import (
+	"bytes"
+	"image"
+	"image/color"
+	"os"
+	"reflect"
+
+	"github.com/nfnt/resize"
+
+	_ "image/jpeg"
+	_ "image/png"
+)
+
+const (
+	width = 100
+
+	// ASCIISTR is the darkness level for characters
+	ASCIISTR = "MND8OZ$7I?+=~:,.."
+)
+
+// Image data describing the image
 type Image struct {
+	Data string `json:"string"`
+}
+
+// Execute image conversion to ascii represenation
+func Execute(filepath string) (*Image, error) {
+	// load file from path
+	f, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+
+	img, _, err := image.Decode(f)
+	if err != nil {
+		return nil, err
+	}
+	// logger.Logger.Debug("image decoded with format", format)
+	f.Close()
+
+	// set output image size
+	sz := img.Bounds()
+	h := (sz.Max.Y * width * 10) / (sz.Max.X * 16)
+	img = resize.Resize(uint(width), uint(h), img, resize.Lanczos3)
+
+	// create ascii represenation of light to dark contrasts
+	// break image up into even blocks
+	// iterate over each block in the image
+	// get darkness by adding up the color values
+	// write the ascii that represents the range of darkness in location
+
+	table := []byte(ASCIISTR)
+	buf := new(bytes.Buffer)
+
+	for i := 0; i < h; i++ {
+		for j := 0; j < width; j++ {
+			g := color.GrayModel.Convert(img.At(j, i))
+			y := reflect.ValueOf(g).FieldByName("Y").Uint()
+			pos := int(y * 16 / 255)
+			_ = buf.WriteByte(table[pos])
+		}
+		_ = buf.WriteByte('\n')
+	}
+
+	return &Image{Data: string(buf.Bytes())}, nil
+	// return &Image{Data: []byte("****")}, nil
 }

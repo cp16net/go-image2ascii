@@ -16,8 +16,18 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
 
+	"github.com/cp16net/go-image2ascii/logger"
+	"github.com/julienschmidt/httprouter"
 	"github.com/spf13/cobra"
+	"github.com/tylerb/graceful"
+)
+
+var (
+	serverPort      int
+	serverInterface string
 )
 
 // httpCmd represents the http command
@@ -31,9 +41,51 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
 		fmt.Println("http called")
+
+		// TODO separate this into server pacakage...
+
+		// mux handler
+		router := httprouter.New()
+		router.POST("/convert", convert)
+		logger.Logger.Info("Routes setup starting server")
+		// Serve this program forever
+		port := strconv.Itoa(serverPort)
+		host := serverInterface
+		httpServer := &graceful.Server{Server: new(http.Server)}
+		httpServer.Addr = host + ":" + port
+		httpServer.Handler = router
+		logger.Logger.Infof("listening at http://%s:%s", host, port)
+		if err := httpServer.ListenAndServe(); err != nil {
+			shutdown(err)
+		}
 	},
+}
+
+func convert(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// data, err := mysql.Write()
+	// if err != nil {
+	// 	logger.Logger.Error(err)
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+	// output, err := json.MarshalIndent(data, "", "\t")
+	// if err != nil {
+	// 	logger.Logger.Error(err)
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+	logger.Logger.Debug("call to /convert")
+	logger.Logger.Debug("repsonse writer: ", w)
+	logger.Logger.Debug("request: ", r)
+	logger.Logger.Debug("params: ", ps)
+	w.Header().Set("content-type", "application/json")
+	fmt.Fprintln(w, string(`{"message": "this is a test"}`))
+}
+
+// shutdown closes down the api server
+func shutdown(err error) {
+	logger.Logger.Fatalln(err)
 }
 
 func init() {
@@ -47,6 +99,10 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// httpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	httpCmd.Flags().IntVarP(&serverPort, "port", "p", 8080, "port on which the server will listen")
+	httpCmd.Flags().StringVarP(&serverInterface, "bind", "", "127.0.0.1", "interface to which the server will bind")
+
+	// 	Host string `env:"HOST" default:"0.0.0.0" long:"host" description:"HTTP listen server"`
+	// 	Port int    `env:"PORT" default:"8080" long:"port" description:"HTTP listen port"`
 
 }
