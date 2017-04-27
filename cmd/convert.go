@@ -33,6 +33,7 @@ var convertCmd = &cobra.Command{
 	Short: "Converts an image to acsii art",
 	Long:  `Converts an image to acsii art`,
 	Run: func(cmd *cobra.Command, args []string) {
+
 		// check number of args (does cobra do this?)
 		if len(args) != 1 {
 			fmt.Println("**ERROR** Wrong number of argments")
@@ -52,7 +53,7 @@ var convertCmd = &cobra.Command{
 		// fmt.Println("do work on: ", filepath)
 		img, err := image.Execute(filepath)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("**ERROR**", err)
 			os.Exit(1)
 		}
 

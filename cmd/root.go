@@ -28,10 +28,7 @@ var cfgFile string
 var RootCmd = &cobra.Command{
 	Use:   "go-image2ascii",
 	Short: "Application that converts an image to ascii art.",
-	Long: `go-image2ascii convets an image to ascii art.
-
-Also has a server that can be configured to run this conversion as a
-webservice.`,
+	Long:  `go-image2ascii converts an image to ascii art.`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -45,15 +42,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags, which, if defined here,
-	// will be global for your application.
-
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-image2ascii.yaml)")
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.

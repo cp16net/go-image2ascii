@@ -8,7 +8,7 @@ build:
 	govendor build
 
 run:
-	PORT=8888 ./go-image2ascii
+	./go-image2ascii http
 
 clean:
 	rm -f go-image2ascii

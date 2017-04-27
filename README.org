@@ -1,0 +1,39 @@
+* go-image2ascii
+
+Convert an Image to ASCII art
+
+* Build
+
+** make
+
+* Usage
+
+#+BEGIN_SRC
+go-image2ascii converts an image to ascii art.
+
+Usage:
+  go-image2ascii [command]
+
+Available Commands:
+  convert     Converts an image to acsii art
+  help        Help about any command
+  http        Run as a web service
+
+Flags:
+      --config string   config file (default is $HOME/.go-image2ascii.yaml)
+  -h, --help            help for go-image2ascii
+
+Use "go-image2ascii [command] --help" for more information about a command.
+#+END_SRC
+
+* References
+
+** main convert code
+
+https://gist.github.com/cdiener/10567484
+https://github.com/stdupp/goasciiart
+
+** gopher images
+
+Source	http://golang.org/doc/gopher/
+Author	Renee French http://reneefrench.blogspot.com
