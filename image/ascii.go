@@ -23,6 +23,8 @@ import (
 
 	"github.com/nfnt/resize"
 
+	// load these for image decoding
+	// add more here for additional image types
 	_ "image/jpeg"
 	_ "image/png"
 )

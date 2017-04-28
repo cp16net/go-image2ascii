@@ -32,6 +32,7 @@ Use "go-image2ascii [command] --help" for more information about a command.
 
 https://gist.github.com/cdiener/10567484
 https://github.com/stdupp/goasciiart
+https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html
 
 ** gopher images
 
