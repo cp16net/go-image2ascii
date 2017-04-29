@@ -80,7 +80,7 @@ func (i Iris) index(ctx *iris.Context) {
 // accepting requests
 func (i Iris) healthz(ctx *iris.Context) {
 	i.Log.Debug("call to ", ctx.Path())
-	ctx.Writef("%s", health{Running: true})
+	ctx.JSON(iris.StatusOK, health{Running: true})
 }
 
 // upload handler
