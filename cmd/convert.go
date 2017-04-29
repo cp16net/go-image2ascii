@@ -32,41 +32,50 @@ var convertCmd = &cobra.Command{
 	Use:   "convert [full filepath to image]",
 	Short: "Converts an image to acsii art",
 	Long:  `Converts an image to acsii art`,
-	Run: func(cmd *cobra.Command, args []string) {
-
-		// check number of args (does cobra do this?)
-		if len(args) != 1 {
-			fmt.Println("**ERROR** Wrong number of argments")
-			cmd.Usage()
-			os.Exit(1)
-		}
-		filepath := args[0]
-
-		// check for image file exists
-		if _, err := os.Stat(filepath); os.IsNotExist(err) {
-			// path/to/whatever does not exist
-			fmt.Println("**ERROR** File does not exist [", filepath, "]")
-			os.Exit(1)
-		}
-
-		// call the image convert function here.
-		// fmt.Println("do work on: ", filepath)
-		img, err := image.Execute(filepath)
-		if err != nil {
-			fmt.Println("**ERROR**", err)
-			os.Exit(1)
-		}
-
-		if jsonOutput == true {
-			j, _ := json.MarshalIndent(img, "", "  ")
-			fmt.Println(string(j))
-		} else {
-			fmt.Println(img.Data)
-		}
-	},
+	Run:   convert,
 }
 
 func init() {
 	RootCmd.AddCommand(convertCmd)
 	convertCmd.Flags().BoolVarP(&jsonOutput, "json", "j", false, "output in json format")
+}
+
+func convert(cmd *cobra.Command, args []string) {
+
+	// check number of args (does cobra do this?)
+	if len(args) != 1 {
+		fmt.Println("**ERROR** Wrong number of argments")
+		cmd.Usage()
+		os.Exit(1)
+	}
+	filepath := args[0]
+
+	// check for image file exists
+	if _, err := os.Stat(filepath); os.IsNotExist(err) {
+		// path/to/whatever does not exist
+		fmt.Println("**ERROR** File does not exist [", filepath, "]")
+		os.Exit(1)
+	}
+
+	// load file from path
+	f, err := os.Open(filepath)
+	if err != nil {
+		fmt.Println("**ERROR**", err)
+		os.Exit(1)
+	}
+
+	// call the image convert function here.
+	// fmt.Println("do work on: ", filepath)
+	img, err := image.Execute(f)
+	if err != nil {
+		fmt.Println("**ERROR**", err)
+		os.Exit(1)
+	}
+
+	if jsonOutput == true {
+		j, _ := json.MarshalIndent(img, "", "  ")
+		fmt.Println(string(j))
+	} else {
+		fmt.Println(img.Data)
+	}
 }

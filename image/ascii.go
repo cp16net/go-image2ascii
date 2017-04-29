@@ -18,13 +18,15 @@ import (
 	"bytes"
 	"image"
 	"image/color"
-	"os"
-	"reflect"
+	"io"
 
+	"github.com/cp16net/go-image2ascii/logger"
 	"github.com/nfnt/resize"
 
-	// load these for image decoding
-	// add more here for additional image types
+	// Package image/jpeg is not used explicitly in the code below,
+	// but is imported for its initialization side-effect, which allows
+	// image.Decode to understand JPEG, GIF, and PNG formatted images.
+	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
 )
@@ -32,8 +34,8 @@ import (
 const (
 	width = 100
 
-	// ASCIISTR is the darkness level for characters
-	ASCIISTR = "MND8OZ$7I?+=~:,.."
+	// ASCIISTR is the 16 darkness levels of characters
+	ASCIISTR = "@ND8OZ$7I?+=~:,.."
 )
 
 // Image data describing the image
@@ -42,44 +44,45 @@ type Image struct {
 }
 
 // Execute image conversion to ascii represenation
-func Execute(filepath string) (*Image, error) {
-	// load file from path
-	f, err := os.Open(filepath)
-	if err != nil {
-		return nil, err
-	}
+func Execute(f io.Reader) (*Image, error) {
 
 	img, _, err := image.Decode(f)
 	if err != nil {
+		logger.Logger.Error("could not decode the image")
 		return nil, err
 	}
-	// logger.Logger.Debug("image decoded with format", format)
-	f.Close()
+	return convert(img)
+}
 
+// convert image here
+//
+// Steps
+//
+// 1. parse the size of the image.
+// 2. resize the image to smaller size by set width.
+// 3. iterate of the pixels of the image and get the greyscale value
+// 4. convert the greyscale value to ASCII mapping of 16 colors
+// 5. write the value to the new ascii buffer and continue 4-6 until end of image.
+// 6. return Image object of Data as an ASCII string
+func convert(img image.Image) (*Image, error) {
 	// set output image size
 	sz := img.Bounds()
 	h := (sz.Max.Y * width * 10) / (sz.Max.X * 16)
 	img = resize.Resize(uint(width), uint(h), img, resize.Lanczos3)
-
-	// create ascii represenation of light to dark contrasts
-	// break image up into even blocks
-	// iterate over each block in the image
-	// get darkness by adding up the color values
-	// write the ascii that represents the range of darkness in location
 
 	table := []byte(ASCIISTR)
 	buf := new(bytes.Buffer)
 
 	for i := 0; i < h; i++ {
 		for j := 0; j < width; j++ {
-			g := color.GrayModel.Convert(img.At(j, i))
-			y := reflect.ValueOf(g).FieldByName("Y").Uint()
-			pos := int(y * 16 / 255)
+			p := img.At(j, i)
+			g := color.GrayModel.Convert(p)
+			y, _, _, _ := g.RGBA()
+			pos := int(y * 16 / 1 >> 16)
 			_ = buf.WriteByte(table[pos])
 		}
 		_ = buf.WriteByte('\n')
 	}
 
 	return &Image{Data: string(buf.Bytes())}, nil
-	// return &Image{Data: []byte("****")}, nil
 }

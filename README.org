@@ -4,7 +4,15 @@ Convert an Image to ASCII art
 
 * Build
 
-** make
+** Makefile available with a few options
+
+*** make
+
+Build, test, vet, and run http server in a simple way.
+
+*** make install
+
+Installs the binary in the ${GOBIN}.
 
 * Usage
 
@@ -33,8 +41,36 @@ Use "go-image2ascii [command] --help" for more information about a command.
 https://gist.github.com/cdiener/10567484
 https://github.com/stdupp/goasciiart
 https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html
+https://library.launchkit.io/on-the-fly-media-upload-processing-with-go-73995ffe10f3
 
 ** gopher images
 
 Source	http://golang.org/doc/gopher/
 Author	Renee French http://reneefrench.blogspot.com
+
+** texas flag image found on google image search
+
+* other notes
+
+** HTTP Errors
+
+Return raw strings from the libraries and could be cleaned up by
+sending clean error messages.
+
+** Limits
+
+No limits on the size of the image uploaded.
+Might be a good idea to limit the size of an image.
+
+** Validation
+
+Also no validation of file types on http requests.
+
+** Temp image file
+
+Writes the image to a temp file to do manipulation on the image.
+Downside is slower response and diskspace when load increases.
+Upside is less ram memory bound on load and image size isnt as big of a concern.
+
+It would be nice if this could be done all in memory.
+The opposite of the above reasons are true.
