@@ -10,8 +10,11 @@ build:
 vet:
 	govendor vet
 
+test:
+	go test ./... | grep -v /vendor/
+
 run:
-	./go-image2ascii http
+	./go-image2ascii iris
 
 install:
 	govendor install
