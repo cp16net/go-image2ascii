@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/cp16net/go-image2ascii/image"
+
 	"github.com/spf13/cobra"
 )
 

@@ -9,13 +9,11 @@ Built and tested with =go version go1.8.1 linux/amd64=
 
 * Build
 
-** Makefile available with a few options
-
-*** make
+** make
 
 Clean up, generate code, test, build, vet, and install http server in a simple way.
 
-*** make help
+** make help
 
 Description of how to use the make cmds.
 
@@ -37,6 +35,8 @@ These 'make' targets are available.
 
 
 * Usage
+
+Once project is installed you can use =${GOBIN}/go-image2ascii= cmd to invoke the CLI.
 
 #+BEGIN_SRC
 go-image2ascii converts an image to ascii art.
@@ -148,6 +148,67 @@ charactor set for the ASCII constant value.
 
 The resizing of the image is done by hard coding the width and using
 it to keep the aspect ratio of the image's height the same.
+
+* Dependencies
+
+** Cobra and Viper
+
+These two projects have been around a while and widely used in many
+projects with golang. There are many contributors and active commits.
+
+[[https://github.com/spf13/cobra][Cobra]] is used as a CLI command generator and makes things very easy to
+add new commands or remove commands. Allows for easy generating
+documentation of the cmd
+
+[[https://github.com/spf13/viper][Viper]] is used as a configuration manager. It works well with cobra and
+handles getting environment variables or command line flag or even
+configuration file parameters automatically.
+
+** go-swagger
+
+I've used swagger in the past and its great for building a REST server
+and client model from a single file. The project still looks very
+active from pull requests and issues.
+
+I looked at using another framework called iris and decided against it
+because there was lots of controversy over how it was maintained. This
+libary has claims of being fast and have many features.
+
+One of the drawbacks over what i aimed to deliver was cut short when i
+used goswagger because the generated models dont support output of an
+html producer. I would liked to have had the html template that i
+currently have in the =templates/= folder to be sent on the =/= and
+=/upload= paths.
+
+Looks like go-swagger needs more customization to get the text/html
+content-type output supported.
+
+** logrus
+
+Logrus is a logging library that allows for much more customization of
+splitting the logs to multiple outputs and formats. Adding in plugins
+can allow transformation of the logs or set output destinations. This
+has a way of being configured from a file as well so you dont need to
+setup all the logging in the application.
+
+Project seems active with new releases regularly and many contributors.
+
+** testify
+
+Testify is a helper for unit testing and makes things a bit more
+straightforward when you are asserting values.
+
+Its been in use for a while but not very active in the last couple
+months. I see people begging to get reviews and pull requests merged.
+
+** resize
+
+This was a library that others have used to convert images when i was
+looking around. Pretty simple and straighforward libary with some good docs.
+
+The project seems stagnant and not many changes but unless new
+features are needed this wouldnt hurt the current use of the libary in
+my project.
 
 * Testing
 
