@@ -140,6 +140,13 @@ Also no initial validation of file types on http headers of the request.
 
 Processes the file upload stream directly to the image decoding routine.
 
+The ASCII charactors to represent an image is set to 16
+currently. Ideally this could be changed by just using a different
+charactor set for the ASCII constant value.
+
+The resizing of the image is done by hard coding the width and using
+it to keep the aspect ratio of the image's height the same.
+
 * Testing
 
 ** Unit Tests

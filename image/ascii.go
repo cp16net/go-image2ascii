@@ -33,19 +33,25 @@ import (
 )
 
 const (
-	width = 100
+	imageWidth = 100
 
-	// ASCIISTR is the 16 darkness levels of characters
-	ASCIISTR = "@ND8OZ$7I?+=~:,.."
+	// ASCII is the 16 darkness levels of characters
+	ASCII = "@ND8OZ$7I?+=~:,.."
 )
+
+// Converter interface
+type Converter interface {
+	Execute(f io.Reader) (*Image, error)
+}
 
 // Image data describing the image
 type Image struct {
-	Data string `json:"string"`
+	Converter `json:"-"`
+	Data      string `json:"string"`
 }
 
 // Execute image conversion to ascii represenation
-func Execute(f io.Reader) (*Image, error) {
+func (*Image) Execute(f io.Reader) (*Image, error) {
 	if f == nil {
 		logger.Logger.Error("nil input given")
 		return nil, errors.New("nil image given")
@@ -75,18 +81,18 @@ func convert(img image.Image) (*Image, error) {
 	}
 	// set output image size
 	sz := img.Bounds()
-	h := (sz.Max.Y * width * 10) / (sz.Max.X * 16)
-	img = resize.Resize(uint(width), uint(h), img, resize.Lanczos3)
+	h := (sz.Max.Y * imageWidth * 10) / (sz.Max.X * 16)
+	img = resize.Resize(uint(imageWidth), uint(h), img, resize.Lanczos3)
 
-	table := []byte(ASCIISTR)
+	table := []byte(ASCII)
 	buf := new(bytes.Buffer)
 
 	for i := 0; i < h; i++ {
-		for j := 0; j < width; j++ {
+		for j := 0; j < imageWidth; j++ {
 			p := img.At(j, i)
 			g := color.GrayModel.Convert(p)
 			y, _, _, _ := g.RGBA()
-			pos := int(y * 16 / 1 >> 16)
+			pos := int(y * uint32(len(table)) / 1 >> uint(len(table)))
 			_ = buf.WriteByte(table[pos])
 		}
 		_ = buf.WriteByte('\n')

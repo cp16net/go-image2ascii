@@ -66,7 +66,8 @@ func convert(cmd *cobra.Command, args []string) {
 	}
 
 	// call the image convert function here.
-	img, err := image.Execute(f)
+	i := image.Image{}
+	img, err := i.Execute(f)
 	if err != nil {
 		printer("**ERROR** converting image", err)
 		return

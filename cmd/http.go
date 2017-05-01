@@ -101,7 +101,8 @@ func health(params operations.GetHealthzCheckParams) middleware.Responder {
 }
 
 func uploaderPost(params operations.PostUploadParams) middleware.Responder {
-	img, err := image.Execute(params.Uploadfile.Data)
+	i := image.Image{}
+	img, err := i.Execute(params.Uploadfile.Data)
 	if err != nil {
 		logger.Logger.Error("Error from image convert: ", err.Error())
 		es := "failed to upload file"

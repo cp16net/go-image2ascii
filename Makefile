@@ -15,6 +15,7 @@ help:
 	@echo
 
 all: clean generate test build vet install
+	@echo "success - everything is awesome"
 
 clean:
 	rm -f go-image2ascii
@@ -23,7 +24,7 @@ clean:
 
 generate:
 	govendor generate
-	swagger generate server -t gen -f ./swagger/swagger.yml --exclude-main -A converter
+	swagger generate server -t gen -f ./swagger.yml --exclude-main -A converter
 
 test:
 	govendor test -cover $(FILES)

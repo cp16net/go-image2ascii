@@ -8,15 +8,17 @@ import (
 )
 
 func TestExecuteWithNil(t *testing.T) {
-	i, err := Execute(nil)
-	assert.Nil(t, i)
+	i := Image{}
+	im, err := i.Execute(nil)
+	assert.Nil(t, im)
 	assert.Error(t, err)
 }
 
 func TestExecuteWithBadImage(t *testing.T) {
 	f, _ := os.Open("../README.org")
-	i, err := Execute(f)
-	assert.Nil(t, i)
+	i := Image{}
+	im, err := i.Execute(f)
+	assert.Nil(t, im)
 	assert.Error(t, err)
 }
 
@@ -29,8 +31,9 @@ func TestConvertWithNilImage(t *testing.T) {
 
 func TestExecuteWithImage(t *testing.T) {
 	f, _ := os.Open("../gopher.png")
-	i, err := Execute(f)
-	assert.NotNil(t, i)
-	assert.Contains(t, i.Data, "@@@@@@@")
+	i := Image{}
+	im, err := i.Execute(f)
+	assert.NotNil(t, im)
+	assert.Contains(t, im.Data, "@@@@@@@")
 	assert.NoError(t, err)
 }
