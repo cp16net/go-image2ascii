@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	// imageWidth  = 80
+	imageWidth = 80
 	// imageHeight = 90
 
 	// ASCII is the 16 darkness levels of characters
@@ -85,16 +85,17 @@ func convert(img image.Image, w, h int) (*Image, error) {
 	// set output image size
 	width := w
 	height := h
-	if w > 0 && h > 0 {
+	if w <= 0 || h <= 0 {
+		width = imageWidth
 		sz := img.Bounds()
-		height = (sz.Max.Y * w * 10) / (sz.Max.X * 16)
+		height = (sz.Max.Y * width * 10) / (sz.Max.X * 16)
 	}
 	img = resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
 
 	table := []byte(ASCII)
 	buf := new(bytes.Buffer)
 
-	for i := 0; i < h; i++ {
+	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
 			p := img.At(j, i)
 			g := color.GrayModel.Convert(p)
