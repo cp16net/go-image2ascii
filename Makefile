@@ -9,18 +9,18 @@ help:
 	@echo "  clean              Removes all build output"
 	@echo "  generate           Generates all code needed"
 	@echo "  test               Run the unit tests"
-	@echo "  build              Builds the binary"
 	@echo "  vet                Runs govendor vet against proejct"
+	@echo "  build              Builds the binary for all GOOS=linux/darwin/windows"
 	@echo "  install            Installs the binary to ${GOBIN}"
 	@echo
 
-all: clean generate test build vet install
+all: clean generate test vet build install
 	@echo "success - everything is awesome"
 
 clean:
 	rm -f go-image2ascii
 	rm -f ${GOBIN}/go-image2ascii
-	rm -rf gen
+	rm -rf gen dist
 
 generate:
 	govendor generate
@@ -30,7 +30,7 @@ test:
 	govendor test -cover $(FILES)
 
 build:
-	govendor build
+	mkdir -p dist && cd dist && govendor build -o go-image2ascii-linux ../. && GOOS=darwin govendor build -o go-image2ascii-darwin ../. && GOOS=windows govendor build -o go-image2ascii-win.exe ../.
 
 vet:
 	govendor vet $(FILES)
