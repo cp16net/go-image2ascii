@@ -151,6 +151,15 @@ it to keep the aspect ratio of the image's height the same.
 
 * Dependencies
 
+** govendor
+
+[[https://github.com/kardianos/govendor]]
+
+This seems to be the new way of managing dependencies since i worked
+with golang versions 1.4 to 1.6. This tool seems to work pretty well
+to update the deps in vendor. Seem many other projects switch to using
+this now instead of godeps.
+
 ** Cobra and Viper
 
 These two projects have been around a while and widely used in many
