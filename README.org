@@ -103,14 +103,14 @@ curl -H "Content-Type: multipart/form-data" -X POST --form "uploadfile=@Golang.p
 
 ** main convert code
 
-https://gist.github.com/cdiener/10567484
-https://github.com/stdupp/goasciiart
-https://library.launchkit.io/on-the-fly-media-upload-processing-with-go-73995ffe10f3
+- https://gist.github.com/cdiener/10567484
+- https://github.com/stdupp/goasciiart
+- https://library.launchkit.io/on-the-fly-media-upload-processing-with-go-73995ffe10f3
 
 ** gopher images
 
-Source	http://golang.org/doc/gopher/
-Author	Renee French http://reneefrench.blogspot.com
+- Source	http://golang.org/doc/gopher/
+- Author	Renee French http://reneefrench.blogspot.com
 
 * Notes
 
