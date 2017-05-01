@@ -166,6 +166,8 @@ configuration file parameters automatically.
 
 ** go-swagger
 
+[[https://github.com/go-swagger/go-swagger]]
+
 I've used swagger in the past and its great for building a REST server
 and client model from a single file. The project still looks very
 active from pull requests and issues.
@@ -185,6 +187,8 @@ content-type output supported.
 
 ** logrus
 
+[[https://github.com/sirupsen/logrus]]
+
 Logrus is a logging library that allows for much more customization of
 splitting the logs to multiple outputs and formats. Adding in plugins
 can allow transformation of the logs or set output destinations. This
@@ -195,6 +199,8 @@ Project seems active with new releases regularly and many contributors.
 
 ** testify
 
+[[https://github.com/stretchr/testify]]
+
 Testify is a helper for unit testing and makes things a bit more
 straightforward when you are asserting values.
 
@@ -202,6 +208,8 @@ Its been in use for a while but not very active in the last couple
 months. I see people begging to get reviews and pull requests merged.
 
 ** resize
+
+[[https://github.com/nfnt/resize]]
 
 This was a library that others have used to convert images when i was
 looking around. Pretty simple and straighforward libary with some good docs.
