@@ -5,6 +5,8 @@ API service to Convert an Image to ASCII art
 There is a command line version of the conversion tool and an http
 service built with goswagger.
 
+Built and tested with `go version go1.8.1 linux/amd64`
+
 * Build
 
 ** Makefile available with a few options
@@ -149,17 +151,29 @@ it to keep the aspect ratio of the image's height the same.
 
 * Testing
 
-** Unit Tests
+** Unit
 
 Code coverage of critical parts of the application are tested. Left
 out any generated code test coverage because this code while core to
 the execution and run of the application could change depending on the
 version of swagger that you have installed for generation.
 
-** Benchmarks
+** Benchmark
 
 (NONE)
 
 It would be nice to be able to run some simple benchmarking tests to
 verify the speed of this routine against another proposed solution in
 the future.
+
+** Integration
+
+(NONE)
+
+It would be nice to run this as a separate service and make sure that
+the results from end to end are validated with some integration type
+tests.
+
+* License
+
+[[LICENSE][Apache License]]
