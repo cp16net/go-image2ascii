@@ -33,7 +33,8 @@ import (
 )
 
 const (
-	imageWidth = 100
+	// imageWidth  = 80
+	// imageHeight = 90
 
 	// ASCII is the 16 darkness levels of characters
 	ASCII = "@ND8OZ$7I?+=~:,.."
@@ -46,12 +47,14 @@ type Converter interface {
 
 // Image data describing the image
 type Image struct {
-	Converter `json:"-"`
-	Data      string `json:"string"`
+	Converter   `json:"-"`
+	Data        string `json:"string"`
+	ImageHeight int    `json:"-"`
+	ImageWidth  int    `json:"-"`
 }
 
 // Execute image conversion to ascii represenation
-func (*Image) Execute(f io.Reader) (*Image, error) {
+func (*Image) Execute(f io.Reader, w, h int) (*Image, error) {
 	if f == nil {
 		logger.Logger.Error("nil input given")
 		return nil, errors.New("nil image given")
@@ -62,7 +65,7 @@ func (*Image) Execute(f io.Reader) (*Image, error) {
 		logger.Logger.Error("could not decode the image")
 		return nil, err
 	}
-	return convert(img)
+	return convert(img, w, h)
 }
 
 // convert image here
@@ -75,24 +78,28 @@ func (*Image) Execute(f io.Reader) (*Image, error) {
 // 4. convert the greyscale value to ASCII mapping of 16 colors
 // 5. write the value to the new ascii buffer and continue 4-6 until end of image.
 // 6. return Image object of Data as an ASCII string
-func convert(img image.Image) (*Image, error) {
+func convert(img image.Image, w, h int) (*Image, error) {
 	if img == nil {
 		return nil, errors.New("No image found")
 	}
 	// set output image size
-	sz := img.Bounds()
-	h := (sz.Max.Y * imageWidth * 10) / (sz.Max.X * 16)
-	img = resize.Resize(uint(imageWidth), uint(h), img, resize.Lanczos3)
+	width := w
+	height := h
+	if w > 0 && h > 0 {
+		sz := img.Bounds()
+		height = (sz.Max.Y * w * 10) / (sz.Max.X * 16)
+	}
+	img = resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
 
 	table := []byte(ASCII)
 	buf := new(bytes.Buffer)
 
 	for i := 0; i < h; i++ {
-		for j := 0; j < imageWidth; j++ {
+		for j := 0; j < width; j++ {
 			p := img.At(j, i)
 			g := color.GrayModel.Convert(p)
 			y, _, _, _ := g.RGBA()
-			pos := int(y * uint32(len(table)) / 1 >> uint(len(table)))
+			pos := int(y * 16 / 1 >> 16)
 			_ = buf.WriteByte(table[pos])
 		}
 		_ = buf.WriteByte('\n')
