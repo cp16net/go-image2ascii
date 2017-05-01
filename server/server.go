@@ -25,7 +25,7 @@ type HTTPServer interface {
 	Server()
 }
 
-// health output struct
-type health struct {
-	Running bool `json:"bool"`
+// Health output struct
+type Health struct {
+	Running bool `json:"running"`
 }

@@ -1,0 +1,88 @@
+info:
+  description: Converts an image to ASCII ART
+  title: Image Converter
+  version: 1.0.0
+paths:
+  # goswagger does not seem to support text/html producer
+  # /:
+  #   get:
+  #     produces:
+  #       - text/html
+  #     responses:
+  #       200:
+  #         description: show upload form
+  #         schema:
+  #           type: string
+  #           description: container the upload html form
+  #         examples:
+  #           text/html:
+  #             <html><body>Your HTML text</body></html>
+  #       default:
+  #         description: error
+  #         schema:
+  #           $ref: "#/definitions/htmlerror"
+  /healthz-check:
+    get:
+      produces:
+        - application/json
+      responses:
+        200:
+          description: json string of the ascii art
+          schema:
+            $ref: "#/definitions/health"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+  /upload:
+    post:
+      produces:
+        - application/json
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: uploadfile
+          in: formData
+          description: The uploaded image file to convert
+          required: true
+          type: file
+      responses:
+        200:
+          description: json string of the ascii art
+          schema:
+            $ref: "#/definitions/ascii"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+
+definitions:
+  health:
+    type: object
+    required:
+      - running
+    properties:
+      running:
+        type: boolean
+  ascii:
+    type: object
+    required:
+      - string
+    properties:
+      string:
+        type: string
+        minLength: 1
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string
+
+schemes:
+  - http
+swagger: "2.0"

@@ -17,6 +17,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/cp16net/go-image2ascii/image"
@@ -25,6 +26,7 @@ import (
 
 var (
 	jsonOutput bool
+	out        io.Writer = os.Stdout
 )
 
 // convertCmd represents the convert command
@@ -44,38 +46,40 @@ func convert(cmd *cobra.Command, args []string) {
 
 	// check number of args (does cobra do this?)
 	if len(args) != 1 {
-		fmt.Println("**ERROR** Wrong number of argments")
-		cmd.Usage()
-		os.Exit(1)
+		printer("**ERROR** Wrong number of arguments")
+		return
 	}
 	filepath := args[0]
 
 	// check for image file exists
 	if _, err := os.Stat(filepath); os.IsNotExist(err) {
 		// path/to/whatever does not exist
-		fmt.Println("**ERROR** File does not exist [", filepath, "]")
-		os.Exit(1)
+		printer("**ERROR** File does not exist [", filepath, "]")
+		return
 	}
 
 	// load file from path
 	f, err := os.Open(filepath)
 	if err != nil {
-		fmt.Println("**ERROR**", err)
-		os.Exit(1)
+		printer("**ERROR** file failed to load ", err)
+		return
 	}
 
 	// call the image convert function here.
-	// fmt.Println("do work on: ", filepath)
 	img, err := image.Execute(f)
 	if err != nil {
-		fmt.Println("**ERROR**", err)
-		os.Exit(1)
+		printer("**ERROR** converting image", err)
+		return
 	}
 
 	if jsonOutput == true {
 		j, _ := json.MarshalIndent(img, "", "  ")
-		fmt.Println(string(j))
+		printer(string(j))
 	} else {
-		fmt.Println(img.Data)
+		printer(img.Data)
 	}
+}
+
+func printer(a ...interface{}) {
+	fmt.Fprint(out, a...)
 }

@@ -1,6 +1,9 @@
 * go-image2ascii
 
-Convert an Image to ASCII art
+API service to Convert an Image to ASCII art
+
+There is a command line version of the conversion tool and an http
+service built with goswagger.
 
 * Build
 
@@ -8,11 +11,28 @@ Convert an Image to ASCII art
 
 *** make
 
-Build, test, vet, and run http server in a simple way.
+Clean up, generate code, test, build, vet, and install http server in a simple way.
 
-*** make install
+*** make help
 
-Installs the binary in the ${GOBIN}.
+Description of how to use the make cmds.
+
+#+BEGIN_SRC
+These 'make' targets are available.
+
+  all                Clean, generate, test, build, vet, install
+  clean              Removes all build output
+  generate           Generates all code needed
+  test               Run the unit tests
+  build              Builds the binary
+  vet                Runs govendor vet against proejct
+  install            Installs the binary to /home/cp16net/gospace/bin
+  tools              Installs tools needed to run
+  release-base       Builds docker image for release
+  build-image        Builds docker image for release
+  publish-image      Publish csm docker image to registry
+#+END_SRC
+
 
 * Usage
 
@@ -25,7 +45,7 @@ Usage:
 Available Commands:
   convert     Converts an image to acsii art
   help        Help about any command
-  http        Run as a web service
+  http        Run an http server
 
 Flags:
       --config string   config file (default is $HOME/.go-image2ascii.yaml)
@@ -34,13 +54,57 @@ Flags:
 Use "go-image2ascii [command] --help" for more information about a command.
 #+END_SRC
 
+** convert cmd
+
+go-image2ascii convert [-j] <path to file>
+
+#+BEGIN_SRC
+Converts an image to acsii art
+
+Usage:
+  go-image2ascii convert [full filepath to image] [flags]
+
+Flags:
+  -h, --help   help for convert
+  -j, --json   output in json format
+
+Global Flags:
+      --config string   config file (default is $HOME/.go-image2ascii.yaml)
+#+END_SRC
+
+** http cmd
+
+#+BEGIN_SRC
+This runs an http web server. (testing this out)
+
+Usage:
+  go-image2ascii http [flags]
+
+Flags:
+      --bind string   interface to which the server will bind (default "127.0.0.1")
+  -h, --help          help for http
+  -p, --port int      port on which the server will listen (default 8080)
+
+Global Flags:
+      --config string   config file (default is $HOME/.go-image2ascii.yaml)
+#+END_SRC
+
+*** example requests
+
+requires curl and jq (optional) installed.
+
+#+BEGIN_SRC
+curl -H "Content-Type: multipart/form-data" -X POST --form "uploadfile=@Golang.png" http://127.0.0.1:8080/upload
+curl -H "Content-Type: multipart/form-data" -X POST --form "uploadfile=@Golang.png" http://127.0.0.1:8080/upload | jq '.'
+curl -H "Content-Type: multipart/form-data" -X POST --form "uploadfile=@Golang.png" http://127.0.0.1:8080/upload | jq -r '.string'
+#+END_SRC
+
 * References
 
 ** main convert code
 
 https://gist.github.com/cdiener/10567484
 https://github.com/stdupp/goasciiart
-https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html
 https://library.launchkit.io/on-the-fly-media-upload-processing-with-go-73995ffe10f3
 
 ** gopher images
@@ -48,29 +112,47 @@ https://library.launchkit.io/on-the-fly-media-upload-processing-with-go-73995ffe
 Source	http://golang.org/doc/gopher/
 Author	Renee French http://reneefrench.blogspot.com
 
-** texas flag image found on google image search
+* Notes
 
-* other notes
+** HTML Output
 
-** HTTP Errors
+I expected to serve a simple html form to test via browser from "/"
+and "/upload" but this didnt work so well because goswagger doesnt
+natively support text/html content type output. I was able to serve it
+via test/plain but the mimetype on the response isnt right to show the
+html page that is delivered.
 
-Return raw strings from the libraries and could be cleaned up by
-sending clean error messages.
+This seems like a trivial task but has proven a little more painful
+than i'd thought.
+
+Maybe this reference would help.
+https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html
 
 ** Limits
 
-No limits on the size of the image uploaded.
-Might be a good idea to limit the size of an image.
+Limit the size of the uploaded file to 5 mb.
 
 ** Validation
 
-Also no validation of file types on http requests.
+Also no initial validation of file types on http headers of the request.
 
-** Temp image file
+** Image Conversion
 
-Writes the image to a temp file to do manipulation on the image.
-Downside is slower response and diskspace when load increases.
-Upside is less ram memory bound on load and image size isnt as big of a concern.
+Processes the file upload stream directly to the image decoding routine.
 
-It would be nice if this could be done all in memory.
-The opposite of the above reasons are true.
+* Testing
+
+** Unit Tests
+
+Code coverage of critical parts of the application are tested. Left
+out any generated code test coverage because this code while core to
+the execution and run of the application could change depending on the
+version of swagger that you have installed for generation.
+
+** Benchmarks
+
+(NONE)
+
+It would be nice to be able to run some simple benchmarking tests to
+verify the speed of this routine against another proposed solution in
+the future.

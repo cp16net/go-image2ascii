@@ -15,6 +15,7 @@
 package logger
 
 import (
+	"io"
 	"os"
 	"strings"
 
@@ -39,7 +40,7 @@ const (
 )
 
 // NewLogger creates a new logger
-func NewLogger(level string) *logrus.Logger {
+func NewLogger(level string, out io.Writer) *logrus.Logger {
 
 	minLogLevel := logrus.DebugLevel
 	switch strings.ToLower(level) {
@@ -56,11 +57,11 @@ func NewLogger(level string) *logrus.Logger {
 	}
 
 	logger := logrus.New()
-	logger.Out = os.Stdout
+	logger.Out = out
 	logger.Level = minLogLevel
 
 	return logger
 }
 
 // Logger is a default logger for application use
-var Logger = NewLogger("debug")
+var Logger = NewLogger("debug", os.Stdout)

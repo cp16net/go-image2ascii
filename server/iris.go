@@ -16,7 +16,6 @@ package server
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -30,12 +29,11 @@ import (
 
 // Iris server type
 type Iris struct {
-	Conf *Config
-	Log  *logrus.Logger
+	Log *logrus.Logger
 }
 
 // Server runs the iris server
-func (i Iris) Server() {
+func (i Iris) Server() *iris.Framework {
 	app := iris.New()
 	app.Adapt(
 		iris.DevLogger(),
@@ -65,9 +63,7 @@ func (i Iris) Server() {
 	// Handle the post request from the upload_form.html to the server
 	app.Post("/upload", iris.LimitRequestBodySize(10<<20), i.upload)
 
-	// start the server at 127.0.0.1:8080
-	port := strconv.Itoa(i.Conf.Port)
-	app.Listen(i.Conf.Iface + ":" + port)
+	return app
 }
 
 // index serves the webpage
@@ -80,7 +76,7 @@ func (i Iris) index(ctx *iris.Context) {
 // accepting requests
 func (i Iris) healthz(ctx *iris.Context) {
 	i.Log.Debug("call to ", ctx.Path())
-	ctx.JSON(iris.StatusOK, health{Running: true})
+	ctx.JSON(iris.StatusOK, Health{Running: true})
 }
 
 // upload handler

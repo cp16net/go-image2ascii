@@ -16,6 +16,7 @@ package image
 
 import (
 	"bytes"
+	"errors"
 	"image"
 	"image/color"
 	"io"
@@ -45,6 +46,10 @@ type Image struct {
 
 // Execute image conversion to ascii represenation
 func Execute(f io.Reader) (*Image, error) {
+	if f == nil {
+		logger.Logger.Error("nil input given")
+		return nil, errors.New("nil image given")
+	}
 
 	img, _, err := image.Decode(f)
 	if err != nil {
@@ -65,6 +70,9 @@ func Execute(f io.Reader) (*Image, error) {
 // 5. write the value to the new ascii buffer and continue 4-6 until end of image.
 // 6. return Image object of Data as an ASCII string
 func convert(img image.Image) (*Image, error) {
+	if img == nil {
+		return nil, errors.New("No image found")
+	}
 	// set output image size
 	sz := img.Bounds()
 	h := (sz.Max.Y * width * 10) / (sz.Max.X * 16)
