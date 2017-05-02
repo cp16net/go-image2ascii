@@ -37,8 +37,8 @@ var (
 var convertCmd = &cobra.Command{
 	Use:   "convert [full filepath to image]",
 	Short: "Converts an image to acsii art",
-	Long: `Converts an image to acsii art. 
-	
+	Long: `Converts an image to acsii art.
+
 	Supports GIF, PNG, JPG formats for images.`,
 	Run: convert,
 }
@@ -56,7 +56,8 @@ func convert(cmd *cobra.Command, args []string) {
 
 	// check number of args (does cobra do this?)
 	if len(args) != 1 {
-		printer("**ERROR** Wrong number of arguments")
+		printer("**ERROR** Wrong number of arguments\n")
+		cmd.Usage()
 		return
 	}
 	filepath := args[0]
@@ -74,6 +75,7 @@ func convert(cmd *cobra.Command, args []string) {
 		printer("**ERROR** file failed to load ", err)
 		return
 	}
+	defer f.Close()
 
 	// call the image convert function here.
 	i := image.Image{}

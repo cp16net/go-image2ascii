@@ -34,10 +34,9 @@ import (
 
 const (
 	imageWidth = 80
-	// imageHeight = 90
 
 	// ASCII is the 16 darkness levels of characters
-	ASCII = "@ND8OZ$7I?+=~:,.."
+	ASCII = "@ND8OZ$7I?+=~:,  "
 )
 
 // Converter interface
