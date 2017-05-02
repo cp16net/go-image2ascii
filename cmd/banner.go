@@ -25,7 +25,6 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 const (
@@ -92,7 +91,7 @@ var bannerCmd = &cobra.Command{
 		defer os.Remove(outputFile)
 
 		i := image.Image{}
-		img, err := i.Execute(f, viper.GetInt("width"), viper.GetInt("length"))
+		img, err := i.Execute(f, -1, -1)
 		if err != nil {
 			printer("**ERROR** converting image", err)
 			return
