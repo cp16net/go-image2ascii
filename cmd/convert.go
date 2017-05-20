@@ -23,31 +23,41 @@ import (
 	"github.com/cp16net/go-image2ascii/image"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
-	jsonOutput bool
-	out        io.Writer = os.Stdout
+	jsonOutput  bool
+	out         io.Writer = os.Stdout
+	imageWidth  int
+	imageHeight int
 )
 
 // convertCmd represents the convert command
 var convertCmd = &cobra.Command{
 	Use:   "convert [full filepath to image]",
 	Short: "Converts an image to acsii art",
-	Long:  `Converts an image to acsii art`,
-	Run:   convert,
+	Long: `Converts an image to acsii art.
+
+	Supports GIF, PNG, JPG formats for images.`,
+	Run: convert,
 }
 
 func init() {
 	RootCmd.AddCommand(convertCmd)
 	convertCmd.Flags().BoolVarP(&jsonOutput, "json", "j", false, "output in json format")
+	convertCmd.Flags().IntVarP(&imageWidth, "width", "w", 80, "width of the output image")
+	convertCmd.Flags().IntVarP(&imageHeight, "length", "l", 85, "height/length of the output image")
+	viper.BindPFlag("width", convertCmd.Flags().Lookup("width"))
+	viper.BindPFlag("length", convertCmd.Flags().Lookup("length"))
 }
 
 func convert(cmd *cobra.Command, args []string) {
 
 	// check number of args (does cobra do this?)
 	if len(args) != 1 {
-		printer("**ERROR** Wrong number of arguments")
+		printer("**ERROR** Wrong number of arguments\n")
+		cmd.Usage()
 		return
 	}
 	filepath := args[0]
@@ -65,10 +75,11 @@ func convert(cmd *cobra.Command, args []string) {
 		printer("**ERROR** file failed to load ", err)
 		return
 	}
+	defer f.Close()
 
 	// call the image convert function here.
 	i := image.Image{}
-	img, err := i.Execute(f)
+	img, err := i.Execute(f, viper.GetInt("width"), viper.GetInt("length"))
 	if err != nil {
 		printer("**ERROR** converting image", err)
 		return

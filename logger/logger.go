@@ -15,53 +15,19 @@
 package logger
 
 import (
-	"io"
 	"os"
-	"strings"
 
 	"github.com/Sirupsen/logrus"
 )
 
-const (
-	// DEBUG level messages will be outputed to log
-	DEBUG = "debug"
-
-	// INFO level messages will be outputed to log
-	INFO = "info"
-
-	// WARN level messages and above output to log
-	WARN = "warn"
-
-	// ERROR level messages will be outputed to log
-	ERROR = "error"
-
-	// FATAL level messages will be outputed to log
-	FATAL = "fatal"
-)
-
 // NewLogger creates a new logger
-func NewLogger(level string, out io.Writer) *logrus.Logger {
-
-	minLogLevel := logrus.DebugLevel
-	switch strings.ToLower(level) {
-	case INFO:
-		minLogLevel = logrus.InfoLevel
-	case WARN:
-		minLogLevel = logrus.WarnLevel
-	case ERROR:
-		minLogLevel = logrus.ErrorLevel
-	case FATAL:
-		minLogLevel = logrus.FatalLevel
-	case DEBUG:
-		minLogLevel = logrus.DebugLevel
-	}
-
+func NewLogger() *logrus.Logger {
 	logger := logrus.New()
-	logger.Out = out
-	logger.Level = minLogLevel
+	logger.Out = os.Stdout
+	logger.Level = logrus.DebugLevel
 
 	return logger
 }
 
 // Logger is a default logger for application use
-var Logger = NewLogger("debug", os.Stdout)
+var Logger = NewLogger()
