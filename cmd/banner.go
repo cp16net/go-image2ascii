@@ -15,20 +15,10 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"runtime"
 	"strings"
 
 	"github.com/cp16net/go-image2ascii/image"
-	"github.com/disintegration/imaging"
-	"github.com/fogleman/gg"
 	"github.com/spf13/cobra"
-)
-
-const (
-	outputFile = "local-file-output.png"
 )
 
 var (
@@ -48,70 +38,16 @@ var bannerCmd = &cobra.Command{
 		}
 		input := strings.Join(args[:], " ")
 
-		//check os
-		if runtime.GOOS == "windows" {
-			fmt.Println("sorry this wont work on windows [dont know where the fonts live]")
-			return
-		} else if runtime.GOOS == "linux" {
-			fontLocation = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
-		} else if runtime.GOOS == "darwin" {
-			fontLocation = "/Library/Fonts/Courier New Bold.ttf"
-		}
-
-		const S = 1024
-		dc := gg.NewContext(S, S)
-		w, h := dc.MeasureString(input)
-		h = 80
-		w = w * 7.5
-
-		dc = gg.NewContext(int(w), int(h))
-		dc.SetRGB(1, 1, 1)
-		dc.Clear()
-		dc.SetRGB(0, 0, 0)
-		if err := dc.LoadFontFace(fontLocation, 80); err != nil {
-			panic(err)
-		}
-		dc.DrawStringAnchored(input, w/2, h/2, 0.5, 0.35)
-
-		dc.SavePNG(outputFile)
-		src, err := imaging.Open(outputFile)
+		b := image.Banner{Input: input}
+		img, err := b.Execute()
 		if err != nil {
-			log.Fatalf("Open failed: %v", err)
-		}
-		dst := imaging.Rotate270(src)
-		imaging.Save(dst, outputFile)
-
-		// load file from path
-		f, err := os.Open(outputFile)
-		if err != nil {
-			printer("**ERROR** file failed to load ", err)
+			printer("**ERROR** failed to convert banner", err)
 			return
 		}
-		defer f.Close()
-		defer os.Remove(outputFile)
-
-		i := image.Image{}
-		img, err := i.Execute(f, -1, -1)
-		if err != nil {
-			printer("**ERROR** converting image", err)
-			return
-		}
-
 		printer(img.Data)
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(bannerCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// bannerCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// bannerCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
 }
