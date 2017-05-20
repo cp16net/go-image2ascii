@@ -17,6 +17,8 @@ help:
 all: clean generate test vet build install
 	@echo "success - everything is awesome"
 
+release: clean generate test vet build-all
+
 clean:
 	rm -f go-image2ascii
 	rm -f ${GOBIN}/go-image2ascii
@@ -30,10 +32,28 @@ test:
 	govendor test -cover $(FILES)
 
 build:
-	mkdir -p dist && cd dist && govendor build -o go-image2ascii-linux ../. && GOOS=darwin govendor build -o go-image2ascii-darwin ../. && GOOS=windows govendor build -o go-image2ascii-win.exe ../.
+	mkdir -p dist
+	govendor build -o dist/go-image2ascii .
+
+build-all: build-linux build-darwin build-windows
+
+build-linux:
+	mkdir -p dist
+	GOOS=linux govendor build -o dist/go-image2ascii-linux .
+
+build-darwin:
+	mkdir -p dist
+	GOOS=darwin govendor build -o dist/go-image2ascii-darwin .
+
+build-windows:
+	mkdir -p dist
+	GOOS=windows govendor build -o dist/go-image2ascii-win.exe .
 
 vet:
 	govendor vet $(FILES)
 
 install:
 	govendor install
+
+http:
+	go-image2ascii http

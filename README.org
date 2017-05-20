@@ -5,7 +5,9 @@ API service to Convert an Image to ASCII art
 There is a command line version of the conversion tool and an http
 service built with goswagger.
 
-Built and tested with =go version go1.8.1 linux/amd64=
+Built and tested with:
+- =go version go1.8.1 linux/amd64=
+- =swagger version >=0.9.0=
 
 * Build
 
